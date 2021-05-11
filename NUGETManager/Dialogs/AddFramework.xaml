@@ -1,0 +1,59 @@
+﻿<Window x:Class="NUGETManager.Dialogs.AddFramework"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:NUGETManager.Dialogs"
+        mc:Ignorable="d"
+        Title="Select a new framework" Height="289.333" Width="276">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Label Content="Select the framework:" Grid.ColumnSpan="2" HorizontalContentAlignment="Center"/>
+        <ComboBox Name="FrameworkSelection" Grid.Row="1" HorizontalContentAlignment="Center" />
+        <Button Grid.Row="2" Grid.ColumnSpan="2" HorizontalContentAlignment="Center" Content="Add new" Width="80" Click="Button_Click" />
+
+        <Grid Grid.Row="3" ColumnSpan="2" Margin="0,20,0,20"  Name="NewFormular" Visibility="Hidden">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <DockPanel Grid.Row="0" Grid.ColumnSpan="2" Margin="0,0,0,10">
+                <Label Content="Name:" />
+                <TextBox Text="{Binding Name}" />
+            </DockPanel>
+
+            <Label Grid.Row="1" Content="Reference Identifier:" />
+            <TextBox Grid.Row="2" Text="{Binding ReferenceIdentifier}" />
+            <Label Grid.Row="1" Grid.Column="1" Content="Dependency Identifier:" />
+            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding DependencyIdentifier}" />
+
+            <Button Content="Add" Grid.Row="3" Grid.ColumnSpan="2" Margin="0,20,0,0" Width="120" Click="Button_Click_1" />
+        </Grid>
+
+        <Grid Grid.Row="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+
+
+            <Button Content="Cancel" IsCancel="True"  />
+            <Button Grid.Column="1" Content="Select" IsDefault="True" Click="ButtonBase_OnClick" />
+
+        </Grid>
+    </Grid>
+</Window>

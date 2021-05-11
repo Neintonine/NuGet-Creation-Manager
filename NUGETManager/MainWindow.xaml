@@ -1,0 +1,274 @@
+﻿<Window x:Class="NUGETManager.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:NUGETManager"
+        xmlns:views="clr-namespace:NUGETManager.Views"
+        mc:Ignorable="d"
+        Icon="icon.ico"
+        Title="NUGET Manager" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5*" />
+            <ColumnDefinition Width="2*" />
+        </Grid.ColumnDefinitions>
+        <DockPanel Grid.Column="1" Name="FileExplorer">
+            <DockPanel Dock="Top">
+
+                <Button DockPanel.Dock="Right" FontFamily="{StaticResource FontAwesome}" Content="&#xf013;" Width="25" FontSize="16" Foreground="Blue" ToolTip="Opens the configuration" />
+
+                <ToolBar DockPanel.Dock="Left">
+                    <Button FontFamily="{StaticResource FontAwesome}" Command="{Binding AddCommand}" Content="&#xf055;" FontSize="16" Foreground="Green" ToolTip="Create a new package" />
+                    <Button FontFamily="{StaticResource FontAwesome}" Command="{Binding SaveCommand}" Content="&#xf0c7;" FontSize="16" Foreground="Blue" ToolTip="Save the selected package" />
+                    <Button FontFamily="{StaticResource FontAwesome}" Command="{Binding DeleteCommand}" Content="&#xf056;" FontSize="16" Foreground="Red" ToolTip="Deletes the selected package" />
+                </ToolBar>
+            </DockPanel>
+            <ListBox Name="FileBox" ItemsSource="{Binding Projects}" SelectionChanged="MainListEvent"/>
+        </DockPanel>
+
+        <TabControl Grid.Column="0" Name="ProjectView" IsEnabled="False">
+            <TabItem Header="General">
+                <Grid Background="#FFE5E5E5">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition  />
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Identifier:" />
+                    <TextBox Grid.Column="1" Text="{Binding Identifier}"  />
+
+                    <Label Grid.Row="1" Content="Package Title:" />
+                    <TextBox Grid.Row="1" Grid.Column="1" Name="TitleBox" Text="{Binding Title}" />
+
+                    <Label Grid.Row="2" Content="Project path:" />
+                    <views:FileBox Grid.Row="2" Grid.Column="1" x:Name="ProjectPath" Path="{Binding Path=ProjectPath, Mode=TwoWay}" BorderBrush="{Binding ProjectPathBorder}" Folder="True" />
+
+                    <Separator Grid.Row="3" Grid.ColumnSpan="2" />
+
+                    <Expander Grid.ColumnSpan="2" Grid.Row="4" Header="Legal">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label Content="License"  />
+                            <DockPanel Grid.Row="0" Grid.Column="1">
+                                <CheckBox IsChecked="{Binding RequiresAcceptance}" DockPanel.Dock="Right" VerticalContentAlignment="Center" Content="Requires Acceptance"/>
+                                <TextBox Text="{Binding License}" />
+                            </DockPanel>
+
+                            <Label Grid.Row="1" Content="Copyright:" />
+                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Copyright}" />
+                        </Grid>
+                    </Expander>
+
+                    <Separator Grid.Row="5" Grid.ColumnSpan="2" />
+
+                    <Label Grid.Row="6" Content="Project URL:" />
+                    <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding ProjectURL}" />
+
+                    <Label Grid.Row="7" Content="Authors:" />
+                    <Grid Grid.Row="7" Grid.Column="1">
+                        <TextBox  x:Name="AuthorTextBox" Text="{Binding Authors}" />
+                        <TextBlock IsHitTestVisible="False" Text="Comma-separated list of authors. Ex: Author1, Author2, etc." VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0" Foreground="DarkGray">
+                            <TextBlock.Style>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Text, ElementName=AuthorTextBox}" Value="">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+
+                    <Label Grid.Row="8" Content="Tags:" />
+                    <Grid Grid.Row="8" Grid.Column="1">
+                        <TextBox  x:Name="TagTextBox" Text="{Binding Tags}" />
+                        <TextBlock IsHitTestVisible="False" Text="Space-separated list of Tags. Ex: Tag1 Tag2 etc." VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0" Foreground="DarkGray">
+                            <TextBlock.Style>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Text, ElementName=TagTextBox}" Value="">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+
+                    <Label Grid.Row="9" Content="Icon:" />
+                    <views:FileBox Grid.Row="9" Grid.Column="1" Path="{Binding IconPath, Mode=TwoWay}" />
+
+                    <Label Grid.Row="10" Content="Description:"/>
+                    <TextBox
+                        Grid.Row="11" Grid.ColumnSpan="2"
+                        TextWrapping="Wrap"
+                        AcceptsReturn="True"
+                        VerticalContentAlignment="Top"
+                        HorizontalScrollBarVisibility="Disabled"
+                        VerticalScrollBarVisibility="Auto"
+                        Text="{Binding Description}"/>
+
+                </Grid>
+            </TabItem>
+            <TabItem Header="References">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <DockPanel >
+                        <Label Content="Framework:" DockPanel.Dock="Left" />
+                        <Button Content="&#xf055; Add" Width="50" Foreground="Green" FontFamily="{StaticResource FontAwesome}" Command="{Binding AddFrameworkCommand}" DockPanel.Dock="Right"/>
+                        <ComboBox Name="FrameworkCombo" ItemsSource="{Binding Path=References}" DisplayMemberPath="Key" SelectionChanged="FrameworkChanged" />
+                    </DockPanel>
+
+                    <DockPanel Grid.Row="1">
+                        <Label Content="File References" DockPanel.Dock="Top"/>
+                        <Grid DockPanel.Dock="Top">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Command="{Binding AddReferenceCommand}" Content="&#xf055; New" Padding="2" Foreground="Green" FontFamily="{StaticResource FontAwesome}" Margin="5,0"/>
+                            <Button Grid.Column="1" Command="{Binding EditReferenceCommand}" Content="&#xf044; Change" Padding="2" Foreground="Blue"  FontFamily="{StaticResource FontAwesome}" Margin="5,0"/>
+                            <Button Grid.Column="2" Command="{Binding RemoveReferenceCommand}"  Content="&#xf056; Remove" Padding="2" Foreground="Red" FontFamily="{StaticResource FontAwesome}" Margin="5,0"/>
+                        </Grid>
+                        <DataGrid Name="DataGrid_FileReferences" IsReadOnly="True" SelectionChanged="ReferenceChanged" />
+                    </DockPanel>
+                    <DockPanel Grid.Row="2">
+                        <Label Content="NuGet Dependencies" DockPanel.Dock="Top" />
+
+                        <Grid DockPanel.Dock="Top">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Command="{Binding AddDependencyCommand}" Content="&#xf055; New" Padding="2" Foreground="Green" FontFamily="{StaticResource FontAwesome}" Margin="5,0"/>
+                            <Button Grid.Column="1" Command="{Binding EditDependencyCommand}" Content="&#xf044; Change" Padding="2" Foreground="Blue"  FontFamily="{StaticResource FontAwesome}" Margin="5,0"/>
+                            <Button Grid.Column="2" Command="{Binding RemoveDependencyCommand}"  Content="&#xf056; Remove" Padding="2" Foreground="Red" FontFamily="{StaticResource FontAwesome}" Margin="5,0"/>
+                        </Grid>
+                        <DataGrid Name="DataGrid_Depenencies" IsReadOnly="True" SelectionChanged="DataGrid_Depenencies_OnSelectionChanged" />
+                    </DockPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Files">
+                <DockPanel Background="#FFE5E5E5">
+                    <Grid DockPanel.Dock="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="0" Command="{Binding AddFileCommand}" Content="&#xf055; New" Padding="2" Foreground="Green" FontFamily="{StaticResource FontAwesome}" Margin="5,0"/>
+                        <Button Grid.Column="1" Command="{Binding EditFileCommand}" Content="&#xf044; Change" Padding="2" Foreground="Blue"  FontFamily="{StaticResource FontAwesome}" Margin="5,0"/>
+                        <Button Grid.Column="2" Command="{Binding RemoveFileCommand}"  Content="&#xf056; Remove" Padding="2" Foreground="Red" FontFamily="{StaticResource FontAwesome}" Margin="5,0"/>
+                    </Grid>
+                    <DataGrid Name="DataGrid_Files" ItemsSource="{Binding Files}" IsReadOnly="True" SelectionChanged="ReferenceChanged" />
+                </DockPanel>
+            </TabItem>
+            <TabItem Header="Versions">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1.5*" />
+                    </Grid.RowDefinitions>
+
+                    <DockPanel Grid.Row="0">
+                        <Button DockPanel.Dock="Top" Width="100" Command="{Binding AddVersionCommand}" Content="&#xf055; New Version" Padding="2" Foreground="Green" FontFamily="{StaticResource FontAwesome}" Margin="5,0"/>
+                        <DataGrid Name="DataGrid_Versions" DockPanel.Dock="Top" ItemsSource="{Binding Versions}" SelectionChanged="DataGrid_Versions_OnSelectionChanged" />
+                    </DockPanel>
+
+
+                    <Grid Grid.Row="1" Name="Version_GRID">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <Label Content="Version-name:" />
+                        <TextBox  Grid.Column="1" Text="{Binding Name}"/>
+
+                        <Label Grid.Row="1" Content="Release Notes:" />
+                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ReleaseNotes}" TextWrapping="Wrap"
+                                 AcceptsReturn="True"
+                                 VerticalContentAlignment="Top"
+                                 HorizontalScrollBarVisibility="Disabled"
+                                 VerticalScrollBarVisibility="Auto" />
+
+                    </Grid>
+
+                </Grid>
+            </TabItem>
+            <TabItem Header="Build">
+                <StackPanel>
+                    <Button Content="Preview .nuspec" Command="{Binding GenerateNUSPECCommand}" />
+                    <DockPanel>
+                        <CheckBox Name="BuildCheckBox" Content="(Re-)Build C#-project" IsChecked="{Binding Compile}" />
+                    </DockPanel>
+                    <views:FileBox IsEnabled="{Binding ElementName=BuildCheckBox, Path=IsChecked}" Path="{Binding CompilePath, Mode=TwoWay}" FileFilter="C#-Project|*.csproj" />
+
+                    <DockPanel>
+                        <Label Content="Custom Target Location:" />
+                        <views:FileBox Folder="True" Path="{Binding TargetLocation, Mode=TwoWay}" />
+                    </DockPanel>
+
+                    <Button Content="Pack package" Command="{Binding PackNugetCommand}" Height="28" />
+
+                    <Separator />
+
+                    <Label Grid.Row="0"  Content="API Key:" />
+                    <Grid Column="1" Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <CheckBox Name="ToggleAPI" Grid.Column="0" VerticalContentAlignment="Center" Content="Show/Edit Key" IsEnabled="True" Checked="ToggleAPI_CheckEvent" Unchecked="ToggleAPI_CheckEvent" Padding="0,0,10,0" />
+                        <TextBox Grid.Column="1" Visibility="Hidden" Name="APIEntry" Text="{Binding APIKey}"  />
+                    </Grid>
+
+                    <DockPanel>
+                        <CheckBox Name="AutoDelete" IsChecked="{Binding AutoDeletePackage}" Content="Automaticly delete package" />
+                    </DockPanel>
+                    <Button Content="Pack and upload to NUGET.org" Command="{Binding UploadNugetCommand}" Height="27" />
+
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+
+    </Grid>
+</Window>

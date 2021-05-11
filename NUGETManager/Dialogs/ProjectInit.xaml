@@ -1,0 +1,38 @@
+﻿<Window x:Class="NUGETManager.Dialogs.ProjectInit"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:NUGETManager.Dialogs"
+        xmlns:views="clr-namespace:NUGETManager.Views"
+        mc:Ignorable="d"
+        Title="Project Creation" Height="152.727" Width="389.545">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition  />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <Label Content="Identifier" />
+        <TextBox Name="IdentifierBox" Grid.Column="1" MaxLines="1" />
+
+        <Label Grid.Row="1" Content="Project Path:" />
+        <views:FileBox x:Name="Path" Grid.Row="1" Grid.Column="1" Folder="True" />
+
+        <Grid Grid.Row="3" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Button Content="Cancel" Padding="0,10" IsCancel="True" />
+            <Button Grid.Column="1" Content="Ok" Click="Button_Click" IsDefault="True" />
+        </Grid>
+    </Grid>
+</Window>
