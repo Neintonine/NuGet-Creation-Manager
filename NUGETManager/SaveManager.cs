@@ -9,7 +9,7 @@ namespace NUGETManager
         public static string AppDataPath;
         static SaveManager()
         {
-            AppDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "NUGETManager");
+            AppDataPath = "data";
             Directory.CreateDirectory(AppDataPath);
             Directory.CreateDirectory(Path.Combine(AppDataPath, "Projects"));
         }

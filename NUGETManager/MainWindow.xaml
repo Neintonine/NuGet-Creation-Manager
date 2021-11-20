@@ -5,9 +5,20 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NUGETManager"
         xmlns:views="clr-namespace:NUGETManager.Views"
+        xmlns:System="clr-namespace:System;assembly=mscorlib"
+        xmlns:StyleAlias="clr-namespace:NUGETManager.Storage"
         mc:Ignorable="d"
         Icon="icon.ico"
         Title="NUGET Manager" Height="450" Width="800">
+    <Window.Resources>
+        <ObjectDataProvider x:Key="EventEnum" MethodName="GetValues"
+                            ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="StyleAlias:EventType"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </Window.Resources>
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="5*" />
@@ -56,7 +67,7 @@
                     <TextBox Grid.Row="1" Grid.Column="1" Name="TitleBox" Text="{Binding Title}" />
 
                     <Label Grid.Row="2" Content="Project path:" />
-                    <views:FileBox Grid.Row="2" Grid.Column="1" x:Name="ProjectPath" Path="{Binding Path=ProjectPath, Mode=TwoWay}" BorderBrush="{Binding ProjectPathBorder}" Folder="True" />
+                    <views:FileBox Grid.Row="2" Grid.Column="1" x:Name="ProjectPath" Path="{Binding Path=ProjectPath, Mode=TwoWay}" BorderBrush="{Binding ProjectPathBorder}" Folder="True" StartPath="{Binding ProjectPath}" />
 
                     <Separator Grid.Row="3" Grid.ColumnSpan="2" />
 
@@ -122,7 +133,7 @@
                     </Grid>
 
                     <Label Grid.Row="9" Content="Icon:" />
-                    <views:FileBox Grid.Row="9" Grid.Column="1" Path="{Binding IconPath, Mode=TwoWay}" />
+                    <views:FileBox Grid.Row="9" Grid.Column="1" Path="{Binding IconPath, Mode=TwoWay}" StartPath="{Binding ProjectPath}" />
 
                     <Label Grid.Row="10" Content="Description:"/>
                     <TextBox
@@ -240,7 +251,7 @@
                     <DockPanel>
                         <CheckBox Name="BuildCheckBox" Content="(Re-)Build C#-project" IsChecked="{Binding Compile}" />
                     </DockPanel>
-                    <views:FileBox IsEnabled="{Binding ElementName=BuildCheckBox, Path=IsChecked}" Path="{Binding CompilePath, Mode=TwoWay}" FileFilter="C#-Project|*.csproj" />
+                    <views:FileBox IsEnabled="{Binding ElementName=BuildCheckBox, Path=IsChecked}" Path="{Binding CompilePath, Mode=TwoWay}" FileFilter="C#-Project|*.csproj" StartPath="{Binding ProjectPath}" />
 
                     <DockPanel>
                         <Label Content="Custom Target Location:" />
@@ -267,6 +278,45 @@
                     <Button Content="Pack and upload to NUGET.org" Command="{Binding UploadNugetCommand}" Height="27" />
 
                 </StackPanel>
+            </TabItem>
+            <TabItem Header="Events" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="54">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1.5*" />
+                        <ColumnDefinition Width="3*" />
+                    </Grid.ColumnDefinitions>
+
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Top">
+                            <Button Content="New Event" Click="Button_Click" />
+                        </StackPanel>
+                        <DataGrid Name="EventsGrid" ItemsSource="{Binding Events}" />
+                    </DockPanel>
+
+                    <DockPanel Grid.Column="1" DataContext="{Binding ElementName=EventsGrid, Path=SelectedItem}">
+                        <DockPanel Dock="Top">
+                            
+                            <Label Content="Event Type:" />
+                            <ComboBox ItemsSource="{Binding Source={StaticResource EventEnum}}" SelectedItem="{Binding Path=EventType}" />
+
+                        </DockPanel>
+                        <DockPanel Dock="Top">
+                            <Label Content="Execution Path:" />
+                            <views:FileBox Folder="True" Path="{Binding Path=ExecutionPath, Mode=TwoWay}" />
+                        </DockPanel>
+                        <Label Content="Batch Code:" />
+                        <TextBox
+                            Text="{Binding BatchCode}"
+                            TextWrapping="Wrap"
+                            AcceptsReturn="True"
+                            VerticalContentAlignment="Top"
+                            HorizontalScrollBarVisibility="Disabled"
+                            VerticalScrollBarVisibility="Auto"
+                            />
+
+                        </DockPanel>
+
+                </Grid>
             </TabItem>
         </TabControl>
 

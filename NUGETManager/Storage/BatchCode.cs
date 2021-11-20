@@ -8,6 +8,7 @@ namespace NUGETManager.Storage
         public static Dictionary<string, string> BatchVariables = new Dictionary<string, string>()
         {
             { "executionPath", Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location) },
+
         };
 
         public static readonly string NugetPackage = "echo # Packing NUGET Package\n%executionPath%\\nuget.exe pack %nuspecPath%\n";

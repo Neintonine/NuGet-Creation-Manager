@@ -11,7 +11,5 @@
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="Margin" Value="0,1"></Setter>
         </Style>
-
-        <converter:InverseBooleanConverter x:Key="InverseBooleanConverter" />
     </Application.Resources>
 </Application>

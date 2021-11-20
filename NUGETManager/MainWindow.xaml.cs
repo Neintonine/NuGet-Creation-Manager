@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -42,6 +43,7 @@ namespace NUGETManager
             foreach (string file in Directory.EnumerateFiles(Path.Combine(SaveManager.AppDataPath, "Projects")))
             {
                 Project proj = SaveManager.Load<Project>("Projects\\" + Path.GetFileNameWithoutExtension(file));
+                if (proj.Events == null) proj.Events = new EventList();
                 proj.ProjectFile = file;
                 loadedProjects.Add(proj);
             }
@@ -50,6 +52,15 @@ namespace NUGETManager
             InitializeComponent();
             FileExplorer.DataContext = MainListBinding.Binding;
             
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            base.OnClosing(e);
+            foreach (Project project in MainListBinding.Binding.Projects)
+            {
+                project.Save();
+            }
         }
 
         public void Reset()
@@ -105,6 +116,17 @@ namespace NUGETManager
         private void DataGrid_Depenencies_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             SelectedDependency = (NUGETDependency) DataGrid_Depenencies.SelectedItem;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (EventsGrid.ItemsSource == null) return;
+
+            EventList list = (EventList) EventsGrid.ItemsSource;
+            list.Add(new EventObject()
+            {
+                _connectedProject = (Project)FileBox.SelectedItem
+            });
         }
     }
 }

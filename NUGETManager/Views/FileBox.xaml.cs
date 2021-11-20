@@ -31,6 +31,9 @@ namespace NUGETManager.Views
         public static readonly DependencyProperty FolderProperty = DependencyProperty.
             Register("Folder", typeof(bool), typeof(FileBox), new FrameworkPropertyMetadata(false));
 
+        public static readonly DependencyProperty StartProperty = DependencyProperty.
+            Register("StartPath", typeof(string), typeof(FileBox), new FrameworkPropertyMetadata(""));
+
         public string Path
         {
             get => (string)GetValue(PathProperty);
@@ -41,12 +44,16 @@ namespace NUGETManager.Views
             get => (string)GetValue(FileFilterProperty);
             set => SetValue(FileFilterProperty, value);
         }
-        
-
         public bool Folder
         {
             get => (bool)GetValue(FolderProperty);
             set => SetValue(FolderProperty, value);
+        }
+
+        public string StartPath
+        {
+            get => (string) GetValue(StartProperty);
+            set => SetValue(PathProperty, value);
         }
 
         public FileBox()
@@ -63,7 +70,8 @@ namespace NUGETManager.Views
                 OpenFileDialog ofd = new OpenFileDialog()
                 {
                     Filter = FileFilter,
-                    Multiselect = false
+                    Multiselect = false,
+                    InitialDirectory = StartPath
                 };
 
                 if (ofd.ShowDialog() == false) return;
@@ -72,7 +80,7 @@ namespace NUGETManager.Views
             }
             else
             {
-                using (var fbd = new FolderBrowserDialog())
+                using (var fbd = new FolderBrowserDialog() {SelectedPath = StartPath})
                 {
                     if (fbd.ShowDialog() == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
                     {

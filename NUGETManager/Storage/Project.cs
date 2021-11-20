@@ -60,12 +60,14 @@ namespace NUGETManager.Storage
 
         public bool RequireLicenseAcceptance;
 
-        public string TargetLocation;
+        public string TargetLocation = ".";
 
         public ObservableDictionary<NUGETFramework, Tuple<ObservableCollection<NUGETFile>, ObservableCollection<NUGETDependency>>> References = new ObservableDictionary<NUGETFramework, Tuple<ObservableCollection<NUGETFile>, ObservableCollection<NUGETDependency>>>();
         public ObservableCollection<NUGETFile> Files = new ObservableCollection<NUGETFile>();
 
         public ObservableCollection<Storage.Version> Versions = new ObservableCollection<Storage.Version>();
+
+        public EventList Events = new EventList();
 
         public Project()
         {

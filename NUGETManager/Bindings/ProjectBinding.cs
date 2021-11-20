@@ -8,11 +8,14 @@ using System.Windows.Media;
 using DrWPF.Windows.Data;
 using NUGETManager.Dialogs;
 using NUGETManager.Storage;
+using Version = NUGETManager.Storage.Version;
 
 namespace NUGETManager.Bindings
 {
     public class ProjectBinding : BindingBase
     {
+        #region Commands
+
         private ICommand _addFrameworkCommand;
 
         private ICommand _addVersionCommand;
@@ -31,6 +34,8 @@ namespace NUGETManager.Bindings
 
         private ICommand _generateNuspecCommand;
 
+        #endregion
+        
         private Project _project;
 
         internal NUGETFramework currentFramework;
@@ -249,6 +254,9 @@ namespace NUGETManager.Bindings
 
         public ObservableCollection<Storage.Version> Versions => _project.Versions;
 
+        public EventList Events => _project.Events;
+
+        #region Command-Properties
         public ICommand AddFrameworkCommand =>
             _addFrameworkCommand ?? (_addFrameworkCommand = (CommandHandler) AddFramework);
 
@@ -281,6 +289,7 @@ namespace NUGETManager.Bindings
 
         public ICommand PackNugetCommand => (CommandHandler) CreateNuget;
         public ICommand UploadNugetCommand => (CommandHandler) UploadPackage;
+        #endregion 
 
         public ProjectBinding(Project project)
         {
@@ -404,12 +413,24 @@ namespace NUGETManager.Bindings
 
         private void UploadPackage()
         {
-            string upload =
+            string upload = "";
+
+            foreach (EventObject o in Events[EventType.BeforeUpload])
+            {
+                upload += o.CreateBatch() + "\n";
+            }
+
+            upload +=
                 $"%executionPath%\\nuget.exe push {Identifier}.{Versions[_project.FilledVersionIndex].Name}.nupkg {APIKey} -src https://api.nuget.org/v3/index.json \n";
 
             if (AutoDeletePackage)
             {
                 upload += $"del {Identifier}.{Versions[_project.FilledVersionIndex].Name}.nupkg\n";
+            }
+
+            foreach (EventObject o in Events[EventType.AfterUpload])
+            {
+                upload += o.CreateBatch() + "\n";
             }
 
             CreateNugetIntern(upload);
@@ -418,6 +439,13 @@ namespace NUGETManager.Bindings
         private void CreateNugetIntern(string uploadCode = null)
         {
             _project.Save();
+
+            if (!Directory.Exists(_project.ProjectPath))
+            {
+                MessageBox.Show("The project path does not exist (anymore). Please adjust your project path.",
+                    "Wrong project path", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
             string path = Path.Combine(_project.ProjectPath, _project.Identifier + ".nuspec");
 
@@ -432,9 +460,23 @@ namespace NUGETManager.Bindings
                 UserSettings.Save();
             }
 
+            
+
+            int version = _project.FilledVersionIndex;
+            Version version_obj = Versions[version];
+
+            string releaseNotePath = Path.Combine(Path.GetTempPath(), "releaseNotes.txt");
+            File.WriteAllText(releaseNotePath, version_obj.ReleaseNotes);
+
             string batch = $"@echo off\ncd {_project.ProjectPath}\n";
             batch += $"set nuspecPath={path}\n";
+            batch += $"set versionID=\"{version_obj.Name}\"\nset releaseNotePath=\"{releaseNotePath}\"\n";
             batch += BatchCode.GetVariables();
+
+            foreach (EventObject o in Events[EventType.BeforeBuilding])
+            {
+                batch += o.CreateBatch() + "\n";
+            }
 
             if (Compile && !string.IsNullOrEmpty(CompilePath))
             {
@@ -449,22 +491,29 @@ namespace NUGETManager.Bindings
             }
 
             batch += BatchCode.NugetPackage;
+
+            foreach (EventObject o in Events[EventType.AfterBuilding])
+            {
+                batch += o.CreateBatch() + "\n";
+            }
+
             if (uploadCode != null) batch += uploadCode;
+
+
             batch += "pause";
             File.WriteAllText(Path.Combine(_project.ProjectPath, "pack.bat"), batch);
 
             Process cmd = Process.Start(Path.Combine(_project.ProjectPath, "pack.bat"));
             cmd.WaitForExit();
 
-            int version = _project.FilledVersionIndex;
 
             if (Directory.Exists(TargetLocation))
             {
-                string start = Path.Combine(_project.ProjectPath, $"{Identifier}.{Versions[version].Name}.nupkg");
+                string start = Path.Combine(_project.ProjectPath, $"{Identifier}.{version_obj.Name}.nupkg");
 
                 if (File.Exists(start))
                 {
-                    string target = Path.Combine(TargetLocation, $"{Identifier}.{Versions[version].Name}.nupkg");
+                    string target = Path.Combine(TargetLocation, $"{Identifier}.{version_obj.Name}.nupkg");
                     File.Copy(start, target, true);
                     File.Delete(start);
                 }
