@@ -16,7 +16,3 @@ Windows 10
 Download the newest build from the releases.
 
 Unpack the file.
-
-The executable "NuGetCreMgr.exe" is the program you looking for.
-
-(if you are searching the project file, they can be found under "%appdata%\NUGETManager\Projects")
